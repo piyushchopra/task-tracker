@@ -35,15 +35,21 @@ public class ProjectTaskService {
         projectTask.setProjectIdentifer(projectIdentifier);
 
         //INITIAL priority when priority null
-//        if(projectTask.getPriority()==0||projectTask.getPriority()==null){
-//            projectTask.setPriority(3);
-//        }
+
         //INITIAL status when status is null
         if(projectTask.getStatus()==""|| projectTask.getStatus()==null){
             projectTask.setStatus("TO_DO");
         }
 
+        if(projectTask.getPriority()==0||projectTask.getPriority()==null){
+            projectTask.setPriority(3);
+        }
+
         return projectTaskRepository.save(projectTask);
+    }
+
+    public Iterable<ProjectTask>findBacklogById(String id){
+        return projectTaskRepository.findByProjectIdentifierOrderByPriority(id);
     }
 
 }
