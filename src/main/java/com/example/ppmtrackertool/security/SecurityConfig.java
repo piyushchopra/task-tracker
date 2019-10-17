@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static com.example.ppmtrackertool.security.SecurityConstants.H2_URL;
+import static com.example.ppmtrackertool.security.SecurityConstants.SIGN_UP_URLS;
 
 @Configuration
 @EnableWebSecurity
@@ -66,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
-                .antMatchers("SIGN_UP_URLS").permitAll()
+                .antMatchers(SIGN_UP_URLS).permitAll()
                 .antMatchers(H2_URL).permitAll()
                 .anyRequest().authenticated();
     }
