@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import java.util.Collections;
+
 import static com.example.ppmtrackertool.security.SecurityConstants.TOKEN_PREFIX;
 
 @RestController
@@ -50,7 +52,7 @@ public class UserController {
         String userName = loginRequest.getEmail();
         String password = loginRequest.getPassword();
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+                .authenticate(new UsernamePasswordAuthenticationToken(userName, password, Collections.emptyList()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = TOKEN_PREFIX +  tokenProvider.generateToken(authentication);
