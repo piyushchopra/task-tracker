@@ -2,9 +2,11 @@ package com.example.ppmtrackertool.services;
 
 import com.example.ppmtrackertool.domain.Backlog;
 import com.example.ppmtrackertool.domain.Project;
+import com.example.ppmtrackertool.domain.User;
 import com.example.ppmtrackertool.exception.ProjectIdException;
 import com.example.ppmtrackertool.repository.BacklogRepository;
 import com.example.ppmtrackertool.repository.ProjectRepository;
+import com.example.ppmtrackertool.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +19,16 @@ public class ProjectService {
     @Autowired
     private BacklogRepository backlogRepository;
 
-    public Project saveOrUpdate(Project project) {
+    @Autowired
+    private UserRepository userRepository;
+
+    public Project saveOrUpdate(Project project, String userName) {
         try {
-            project.setProjectIdentifier(project.getProjectIdentifier());
+
+            User user = userRepository.findByUsername(userName);
+            project.setUser(user);
+            project.setProjectLeader(user.getUsername());
+            project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
 
             if(project.getId()==null){
                 Backlog backlog = new Backlog();
