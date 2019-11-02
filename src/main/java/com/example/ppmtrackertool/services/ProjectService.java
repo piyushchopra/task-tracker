@@ -4,6 +4,7 @@ import com.example.ppmtrackertool.domain.Backlog;
 import com.example.ppmtrackertool.domain.Project;
 import com.example.ppmtrackertool.domain.User;
 import com.example.ppmtrackertool.exception.ProjectIdException;
+import com.example.ppmtrackertool.exception.ProjectNotFoundException;
 import com.example.ppmtrackertool.repository.BacklogRepository;
 import com.example.ppmtrackertool.repository.ProjectRepository;
 import com.example.ppmtrackertool.repository.UserRepository;
@@ -48,23 +49,35 @@ public class ProjectService {
         }
     }
 
-    public Project getProjectByIdentifier(String projectid) {
+    public Project getProjectByIdentifier(String projectid, String username) {
         Project project = projectRepository.findByProjectIdentifier(projectid.toUpperCase());
         if(project == null) {
             throw new ProjectIdException("Project Id: "+projectid+" doesn't exist");
         }
+        if(!project.getProjectLeader().equals(username)){
+            throw new ProjectNotFoundException("Project not found in your account");
+        }
         return project;
     }
 
-    public Iterable<Project> findAllProjects(){
-        return projectRepository.findAll();
+    public Iterable<Project> findAllProjects(String username){
+        return projectRepository.findAllByProjectLeader(username);
     }
 
-    public void deleteProjectByIdentifier(String projectid){
-        Project project = projectRepository.findByProjectIdentifier(projectid.toUpperCase());
+    public Project findProjectByIdentifier(String projectId, String username){
+        //Only want to return the project if the user looking for it is the owner
+        Project project = projectRepository.findByProjectIdentifier(projectId.toUpperCase());
         if(project == null){
-            throw  new  ProjectIdException("Cannot Project with ID '"+projectid+"'. This project does not exist");
+            throw new ProjectIdException("Project ID '"+projectId+"' does not exist");
+
         }
-        projectRepository.delete(project);
+        if(!project.getProjectLeader().equals(username)){
+            throw new ProjectNotFoundException("Project not found in your account");
+        }
+        return project;
+    }
+
+    public void deleteProjectByIdentifier(String projectid, String username){
+        projectRepository.delete(findProjectByIdentifier(projectid, username));
     }
 }
